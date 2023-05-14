@@ -7,7 +7,7 @@ from langchain.chains import LLMChain, SequentialChain
 from langchain.memory import ConversationBufferMemory
 from langchain.utilities import WikipediaAPIWrapper 
 from flask import Flask, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 from flask import Flask, request
 from langchain.document_loaders import TextLoader
@@ -25,6 +25,9 @@ from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+import pickle
+import faiss
+from langchain.vectorstores import FAISS
 
 
 # load_dotenv()
@@ -32,23 +35,86 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 app = Flask(__name__)
 CORS(app)
 
-os.environ['OPENAI_API_KEY'] = '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'
-
 @app.route('/generate', methods=['POST'])
+@cross_origin()
 def generate():
     # App framework
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo")
+    llm = ChatOpenAI()
     prompt = request.json['prompt']
     option = request.json['option']
-    print(option)
     if option == 'c':
         url = 'src/pages/webfiles/c-client'
     elif option == 'u':
         url = 'src/pages/webfiles/u-client'
     elif option == 'b':
         url = 'src/pages/webfiles/b-client'
-
     print("Prompt test:", prompt)
+    
+    # loader = DirectoryLoader(url, glob='**/*.txt')
+    # docs = loader.load()
+    # char_text_splitter = CharacterTextSplitter(chunk_size=3000, chunk_overlap=400)
+    # doc_texts = char_text_splitter.split_documents(docs)
+    # openAI_embeddings = OpenAIEmbeddings(openai_api_key='')
+    # vStore = Chroma.from_documents(doc_texts, openAI_embeddings)
+    # model = VectorDBQA.from_chain_type(llm=OpenAI(), chain_type='stuff', vectorstore=vStore)
+    # question = 'what is the percentage of women in the bhp workforce?'
+    # script = model.run(question)
+    # return (script)
+
+    # BREAK
+    # CUR TEST
+    loader = DirectoryLoader(url, glob='**/*.txt')
+    doc = loader.load()
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=400)
+    docs = text_splitter.split_documents(doc)
+    # Get the total number of characters so we can see the average later
+    num_total_characters = sum([len(x.page_content) for x in docs])
+    print (f"Now you have {len(docs)} documents that have an average of {num_total_characters / len(docs):,.0f} characters (smaller pieces)")
+    # Get your embeddings engine ready
+    embeddings = OpenAIEmbeddings(openai_api_key=os.getenv('OPENAI_API_KEY'))
+
+    # Embed your documents and combine with the raw text in a pseudo db. Note: This will make an API call to OpenAI
+    docsearch = FAISS.from_documents(docs, embeddings)
+    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=docsearch.as_retriever())
+
+    
+    # Prompt templates
+    title_template = PromptTemplate(
+        input_variables = ['topic'], 
+        template='Please translate this to English if it is not in English: {topic}'
+    )
+    # final_template = PromptTemplate(
+    #     input_variables = ['final'], 
+    #     template='Please answer like you are a helpful virtual assistant: {final}'
+    # )
+
+    # Memory 
+    title_memory = ConversationBufferMemory(input_key='topic', memory_key='chat_history')
+    final_memory = ConversationBufferMemory(input_key='final', memory_key='chat_history')
+
+    # Llms
+    llm = OpenAI(temperature=0.9) 
+    title_chain = LLMChain(llm=llm, prompt=title_template, verbose=True, output_key='title', memory=title_memory)
+    # final_chain = LLMChain(llm=llm, prompt=final_template, verbose=True, output_key='final', memory=final_memory)
+
+    # Show stuff to the screen if there's a prompt 
+    translated = title_chain.run(prompt)
+    script = qa.run(translated)
+    # final_chain = final_chain.run(final=script)
+    # BREAKING
+
+    print(script)
+    return script
+
+    # print(final_chain)
+    # return final_chain
+
+
+# Flask app run method
+if __name__ == '__main__':
+    app.run(port=8080, debug=True)
+
+
 
     # TEST 1
     # loader = TextLoader('src\pages\data\idk.txt')
@@ -101,48 +167,8 @@ def generate():
     # docsearch = Chroma.from_documents(texts, embeddings)
     # qa = VectorDBQA.from_chain_type(llm=OpenAI(), chain_type="stuff", vectorstore=docsearch)
 
-    # CUR TEST
-    loader = DirectoryLoader(url, glob='**/*.txt')
-    doc = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=400)
-    docs = text_splitter.split_documents(doc)
-    # Get the total number of characters so we can see the average later
-    num_total_characters = sum([len(x.page_content) for x in docs])
-    print (f"Now you have {len(docs)} documents that have an average of {num_total_characters / len(docs):,.0f} characters (smaller pieces)")
-    # Get your embeddings engine ready
-    embeddings = OpenAIEmbeddings(openai_api_key="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")
-
-    # Embed your documents and combine with the raw text in a pseudo db. Note: This will make an API call to OpenAI
-    docsearch = FAISS.from_documents(docs, embeddings)
-    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=docsearch.as_retriever())
 
     
-    # Prompt templates
-    title_template = PromptTemplate(
-        input_variables = ['topic'], 
-        template='Please translate this to English if it is not in English: {topic}'
-    )
-    final_template = PromptTemplate(
-        input_variables = ['final'], 
-        template='Please answer the question with the context provided only: {final}'
-    )
-
-
-    # Memory 
-    title_memory = ConversationBufferMemory(input_key='topic', memory_key='chat_history')
-    final_memory = ConversationBufferMemory(input_key='final', memory_key='chat_history')
-
-    # Llms
-    llm = OpenAI(temperature=0.9) 
-    title_chain = LLMChain(llm=llm, prompt=title_template, verbose=True, output_key='title', memory=title_memory)
-    final_chain = LLMChain(llm=llm, prompt=final_template, verbose=True, output_key='final', memory=final_memory)
-
-    # Show stuff to the screen if there's a prompt 
-    translated = title_chain.run(prompt)
-    script = qa.run(translated)
-    # final_chain = final_chain.run(final=script)
-
-
     # BACKUP
     # title_template = PromptTemplate(
     #     input_variables = ['topic'], 
@@ -171,14 +197,3 @@ def generate():
     # title = title_chain.run(prompt)
     # wiki_research = wiki.run(prompt) 
     # script = script_chain.run(title=title, wikipedia_research=wiki_research)
-
-    print(script)
-    return script
-
-    # print(final_chain)
-    # return final_chain
-
-
-# Flask app run method
-if __name__ == '__main__':
-    app.run(port=8080, debug=True)

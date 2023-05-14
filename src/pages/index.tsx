@@ -74,13 +74,11 @@ export default function Home() {
   return (
     <main>
       <div className="container mx-auto px-4 ">
-        <p className="text-center text-2xl m-4 mb-2 font-bold">
-          Choose your topic and ask a question in the prompt.
+        <p className="text-center text-3xl m-4 mb-2 font-bold">
+          Access Info In A Snap
         </p>
-        <p className="text-center text-base px-4 mb-4">
-          First, choose your topic and an AI model. Ask a question in the prompt
-          on your left. <br />
-          The response will be available on the right.
+        <p className="text-center text-lg px-4 mb-4">
+          Choose your topic and ask your question .
         </p>
         {/* <div className="mt-4 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div> */}
 
@@ -91,7 +89,7 @@ export default function Home() {
               <button
                 id="dropdownDefaultButton"
                 data-dropdown-toggle="dropdown"
-                className="w-full m-2 text-white bg-[#669bbc] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-left inline-flex items-center justify-between dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="w-full m-2 text-white bg-[#5f5f5f] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-left inline-flex items-center justify-between dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
@@ -145,7 +143,7 @@ export default function Home() {
               <button
                 id="dropdownDefaultButton2"
                 data-dropdown-toggle="dropdown2"
-                className="w-full m-2 text-white bg-[#669bbc] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-left inline-flex items-center justify-between dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="w-full m-2 text-white bg-[#5f5f5f] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-left inline-flex items-center justify-between dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 type="button"
                 onClick={() => setIsDropdownOpen2(!isDropdownOpen2)}
               >
@@ -199,8 +197,8 @@ export default function Home() {
             <form className="m-2" onSubmit={formSubmit}>
               <div className="flex flex-col justify-center">
                 <textarea
-                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  rows={6}
+                  className="text-xl block p-2.5 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  rows={16}
                   placeholder="Enter your question"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
@@ -212,7 +210,7 @@ export default function Home() {
                 />
                 <button
                   type="submit"
-                  className=" m-6 mx-10 text-white bg-[#669bbc] hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className=" m-6 mb-0 mx-4 text-white bg-[#5f5f5f] hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   Submit
                 </button>
@@ -250,7 +248,7 @@ export default function Home() {
                 {chatLog ? (
                   chatLog
                 ) : (
-                  <span className="text-gray-400 opacity-50">
+                  <span className="text-gray-400 opacity-75">
                     The response will be here...
                   </span>
                 )}
