@@ -32,7 +32,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 app = Flask(__name__)
 CORS(app)
 
-os.environ['OPENAI_API_KEY'] = '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'
+os.environ['OPENAI_API_KEY'] = ''
 
 @app.route('/generate', methods=['POST'])
 def generate():
@@ -110,7 +110,7 @@ def generate():
     num_total_characters = sum([len(x.page_content) for x in docs])
     print (f"Now you have {len(docs)} documents that have an average of {num_total_characters / len(docs):,.0f} characters (smaller pieces)")
     # Get your embeddings engine ready
-    embeddings = OpenAIEmbeddings(openai_api_key="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")
+    embeddings = OpenAIEmbeddings(openai_api_key="")
 
     # Embed your documents and combine with the raw text in a pseudo db. Note: This will make an API call to OpenAI
     docsearch = FAISS.from_documents(docs, embeddings)
