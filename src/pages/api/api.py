@@ -35,11 +35,6 @@ from langchain.vectorstores import FAISS
 app = Flask(__name__)
 CORS(app)
 
-<<<<<<< HEAD
-=======
-os.environ['OPENAI_API_KEY'] = ''
-
->>>>>>> 38d013e558d11f9411a517ad82fcfab16a96198a
 @app.route('/generate', methods=['POST'])
 @cross_origin()
 def generate():
@@ -172,23 +167,6 @@ if __name__ == '__main__':
     # docsearch = Chroma.from_documents(texts, embeddings)
     # qa = VectorDBQA.from_chain_type(llm=OpenAI(), chain_type="stuff", vectorstore=docsearch)
 
-<<<<<<< HEAD
-=======
-    # CUR TEST
-    loader = DirectoryLoader(url, glob='**/*.txt')
-    doc = loader.load()
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=400)
-    docs = text_splitter.split_documents(doc)
-    # Get the total number of characters so we can see the average later
-    num_total_characters = sum([len(x.page_content) for x in docs])
-    print (f"Now you have {len(docs)} documents that have an average of {num_total_characters / len(docs):,.0f} characters (smaller pieces)")
-    # Get your embeddings engine ready
-    embeddings = OpenAIEmbeddings(openai_api_key="")
-
-    # Embed your documents and combine with the raw text in a pseudo db. Note: This will make an API call to OpenAI
-    docsearch = FAISS.from_documents(docs, embeddings)
-    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=docsearch.as_retriever())
->>>>>>> 38d013e558d11f9411a517ad82fcfab16a96198a
 
     
     # BACKUP

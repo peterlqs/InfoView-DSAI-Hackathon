@@ -82,7 +82,7 @@ export default function Home() {
         </p>
         {/* <div className="mt-4 w-full h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div> */}
 
-        <div className="flex flex-row">
+        <div className="flex flex-col md:flex-row">
           <div className="basis-1/4">
             {/* Accordion */}
             <div className="w-full flex justify-center">
@@ -198,7 +198,7 @@ export default function Home() {
               <div className="flex flex-col justify-center">
                 <textarea
                   className="text-xl block p-2.5 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  rows={16}
+                  rows={12}
                   placeholder="Enter your question"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
