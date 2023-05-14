@@ -201,6 +201,7 @@ export default function Home() {
                   rows={12}
                   placeholder="Enter your question"
                   value={inputValue}
+                  disabled={selectedOption && selectedOption2 ? false : true}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
